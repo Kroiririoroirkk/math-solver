@@ -93,8 +93,10 @@ def solveQuadratic(var, e):
     newList = [expr for expr in newList if expr != Var(var) and expr != Op('^', [Var(var), Lit(2)])]
     newList.append(Lit(1))
     return expandExpr(Op('*', newList))
+  def isVarSquared(expr):
+    return expr == Op('^', [Var(var), Lit(2)])
   def isQuadraticTerm(expr):
-    return isinstance(expr, Op) and expr.name == '^' and expr.args == [Var(var), Lit(2)]
+    return isVarSquared(expr) or (isinstance(expr, Op) and expr.name == '*' and any([isVarSquared(factor) for factor in expr.args]) and all([isinstance(factor, Lit) or isinstance(factor, Var) or isVarSquared(factor) for factor in expr.args]))
   def coefficient(term):
     if isinstance(term, Lit):
       return None
@@ -113,19 +115,18 @@ def solveQuadratic(var, e):
     else:
       return None
   def getQuadraticParts():
-    if isinstance(e, Op):
-      if e.name == '^' and e.args == [Var(var), Lit(2)]:
-        return (Lit(1), Lit(0), Lit(0))
-      elif e.name == '*' and all([isinstance(factor, Lit) or isinstance(factor, Var) or isQuadraticTerm(factor) for factor in e.args]):
-        return (divideByVarSquared(e.args), Lit(0), Lit(0))
-      elif e.name == '+' and any([summand.contains(Op('^', [Var(var), Lit(2)])) for summand in e.args]):
-        varSquaredCoefficients = [coefficient(summand) for summand in e.args if isQuadraticTerm(summand)]
-        varCoefficients = [coefficient(summand) for summand in e.args if summand.contains(Var(var)) and not isQuadraticTerm(summand)]
-        if all(varSquaredCoefficients) and all(varCoefficients):
-          aVal = expandExpr(Op('+', [Lit(0)] + varSquaredCoefficients))
-          bVal = expandExpr(Op('+', [Lit(0), Lit(0)] + varCoefficients))
-          cVal = expandExpr(Op('+', [Lit(0)] + [summand for summand in e.args if not summand.contains(Var(var))]))
-          return (aVal, bVal, cVal)
+    if isVarSquared(e):
+      return (Lit(1), Lit(0), Lit(0))
+    elif isQuadraticTerm(e):
+      return (divideByVarSquared(e.args), Lit(0), Lit(0))
+    elif isinstance(e, Op) and e.name == '+' and any([isQuadraticTerm(summand) for summand in e.args]):
+      varSquaredCoefficients = [coefficient(summand) for summand in e.args if isQuadraticTerm(summand)]
+      varCoefficients = [coefficient(summand) for summand in e.args if summand.contains(Var(var)) and not isQuadraticTerm(summand)]
+      if all(varSquaredCoefficients) and all(varCoefficients):
+        aVal = expandExpr(Op('+', [Lit(0)] + varSquaredCoefficients))
+        bVal = expandExpr(Op('+', [Lit(0), Lit(0)] + varCoefficients))
+        cVal = expandExpr(Op('+', [Lit(0)] + [summand for summand in e.args if not summand.contains(Var(var))]))
+        return (aVal, bVal, cVal)
   def solveQuadraticWithParts(a, b, c):
     return {expandExpr(solution) for solution in {
       Op('/', [Op('+', [Op('neg', [b]), Op('sqrt', [Op('-', [Op('^', [b, Lit(2)]), Op('*', [Lit(4), a, c])])])]), Op('*', [Lit(2), a])]),
