@@ -206,15 +206,3 @@ def solve(var, e):
             return 'Not solvable by this calculator'
     else:
         return 'Equation independent of variable ' + var
-
-
-def solveIO():
-    equationStr = input('Enter equation: ')
-    var = input('Enter variable to solve for: ')
-    solutions = solve(var[0], stringToAST(equationStr))
-    if isinstance(solutions, str):
-        print('Error:', solutions)
-    else:
-        print('Answer:',
-              ', '.join([var[0] + ' = ' + str(solution)
-                        for solution in solutions]))
