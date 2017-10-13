@@ -4,11 +4,11 @@ A simple calculator for manipulating algebraic expressions: it can solve linear 
 
 The entry point to the library is `mathsolver.solver`. In the `mathsolver.solver` module, there is:
 
-  * a `stringToAST` function, which takes a `str` and converts it to an `Expr`
+  * a `stringToAST` function, which takes a `str` and converts it to an `Expr`; it throws a `ValueError` if the input is invalid
   * a `simplifyExpr` function, which takes an `Expr` and simplifies it
-  * a `simplifyStr` function, which takes a `str`, converts it into an `Expr`, and then simplifies it
+  * a `simplifyStr` function, which takes a `str`, converts it into an `Expr`, and then simplifies it; it throws a `ValueError` if the input is invalid
   * an `expandExpr` function, which takes an `Expr` and simplifies it (i.e. simplifies it and applies the distributive property)
-  * an `expandStr` function, which takes a `str`, converts it into an `Expr`, and then expands it
+  * an `expandStr` function, which takes a `str`, converts it into an `Expr`, and then expands it; it throws a `ValueError` if the input is invalid
   * a `solveLinear` function, which takes a `str` var and an `Expr` e and solves the equation e=0 for var; it returns a `set` with the answer if e is linear in var and `'Expression not linear'` otherwise
   * a `solveQuadratic` function, which takes a `str` var and an `Expr` e and solves the equation e=0 for var; it returns a `set` with the answer(s) if e is quadratic in var and `'Expression not quadratic'` otherwise
   * a `solve` function, which takes a `str` var and an `Expr` e and solves e for var; it returns:
