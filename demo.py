@@ -7,7 +7,11 @@ try:
 except ValueError as e:
     print(str(e))
 print('abcf + 8 + 10 + abcf', simplifyStr('abcf + 8 + 10 + abcf'), sep='; ')
+print('abcf + 8 + 10 + abcf', simplifyExpr(stringToAST('abcf + 8 + 10 + abcf')), sep='; ')
 print('f((4+x^2)(x^2-7), 6)', expandStr('f((4+x^2)(x^2-7), 6)'), sep='; ')
+print('f((4+x^2)(x^2-7), 6)', expandExpr(stringToAST('f((4+x^2)(x^2-7), 6)')), sep='; ')
+print('x+1=3-p', *solveLinear('p', stringToAST('x+1=3-p')))
+print('x^2+x=6(x-7)', *solveQuadratic('p', expandStr('x^2+x=6(x-7)')))
 print('x^2+x=fx-3', *solve('x', expandStr('x^2+x=fx-3')), sep='; ')
 print('j=5-j', *solve('j', expandStr('j=5-j')), sep='; ')
 
